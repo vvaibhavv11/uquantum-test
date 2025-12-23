@@ -1,4 +1,3 @@
-import os
 import time
 import logging
 from pathlib import Path
@@ -8,6 +7,7 @@ import numpy as np
 from fastapi import HTTPException, status
 from qiskit import QuantumCircuit, transpile
 from qiskit.providers.fake_provider import GenericBackendV2
+from config import settings
 
 try:
     from qiskit.providers.aer import Aer
@@ -40,13 +40,14 @@ logger.setLevel(logging.INFO)
 
 class TranspileService:
     def __init__(self):
-        backend_qubits = int(os.getenv("TRANSPILER_BACKEND_QUBITS", "27"))
+        backend_qubits = settings.TRANSPILER_BACKEND_QUBITS
         self.backend = GenericBackendV2(num_qubits=backend_qubits)
         # Default model path: inside backend/transpiler/new_rl_transpiler.zip
         default_model_path = Path(__file__).resolve().parent.parent / "transpiler" / "new_rl_transpiler.zip"
-        self.model_path = Path(os.getenv("TRANSPILER_MODEL_PATH", default_model_path))
+        model_path_str = settings.TRANSPILER_MODEL_PATH or str(default_model_path)
+        self.model_path = Path(model_path_str)
         self.model_dir = self.model_path.parent
-        self.log_dir = Path(os.getenv("TRANSPILER_LOG_DIR", "./logs"))
+        self.log_dir = Path(settings.TRANSPILER_LOG_DIR)
 
         self.parallel_runner = SmallParallelTranspiler(self.backend)
         self.safe_rl: Optional[SafeRLTranspiler] = None

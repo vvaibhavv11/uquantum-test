@@ -1,14 +1,13 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth_routes, workspace_routes, llm_routes, transpile_routes, execution_routes, hardware_routes
+from config import settings
 import logging
 
 app = FastAPI(title="Uniq Quantum Hub Backend MVP")
 
 # CORS
-frontend_origin_env = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000,http://localhost:8080")
-origins = [o.strip() for o in frontend_origin_env.split(",")]
+origins = [o.strip() for o in settings.FRONTEND_ORIGIN.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
