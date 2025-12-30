@@ -2,26 +2,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth_routes, workspace_routes, llm_routes, transpile_routes, execution_routes, hardware_routes
 from settings import settings
+from dotenv import load_dotenv, dotenv_values
+import os
 import logging
 
 app = FastAPI(title="Uniq Quantum Hub Backend MVP")
-
-# CORS
-_origins_raw = (settings.FRONTEND_ORIGIN or "").strip()
-# If FRONTEND_ORIGIN is set to '*' or is empty, allow any origin but do not allow credentials
-if _origins_raw == "*" or not _origins_raw:
-    origins = ["*"]
-    allow_credentials = False  # browsers disallow credentials with wildcard origin
-else:
-    origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
-    allow_credentials = True  # explicit origins are safe for credentials
+load_dotenv() 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=allow_credentials,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[os.getenv("FRONTEND_ORIGIN")],
+    allow_credentials=True,
+    allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization'],
 )
 
 # Logging
