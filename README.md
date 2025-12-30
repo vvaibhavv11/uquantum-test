@@ -9,7 +9,7 @@
    - `IBM_API_KEY`
    - `REDIS_URL`
    - `GROQ_API_KEY`
-   - `FRONTEND_ORIGIN`
+   - `FRONTEND_ORIGIN` (comma-separated list of allowed origins, e.g. `http://localhost:3000,https://uquantum.vercel.app` — use `*` to allow all origins but note credentials will be disabled)
 4. Run backend:
 
 ```bash

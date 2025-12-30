@@ -7,18 +7,26 @@ import logging
 app = FastAPI(title="Uniq Quantum Hub Backend MVP")
 
 # CORS
-origins = [o.strip() for o in settings.FRONTEND_ORIGIN.split(",")]
+_origins_raw = (settings.FRONTEND_ORIGIN or "").strip()
+# If FRONTEND_ORIGIN is set to '*' or is empty, allow any origin but do not allow credentials
+if _origins_raw == "*" or not _origins_raw:
+    origins = ["*"]
+    allow_credentials = False  # browsers disallow credentials with wildcard origin
+else:
+    origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
+    allow_credentials = True  # explicit origins are safe for credentials
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,             # Accept both ports for dev
-    allow_credentials=True,
+    allow_origins=origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Logging
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("uvicorn").info(f"CORS allowed origins: {origins}, allow_credentials={allow_credentials}")
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth")
