@@ -19,7 +19,7 @@ app.add_middleware(
 
 # Logging
 logging.basicConfig(level=logging.INFO)
-logging.getLogger("uvicorn").info(f"CORS allowed origins: {origins}, allow_credentials={allow_credentials}")
+logging.getLogger("uvicorn").info(f"CORS allowed origins: {os.getenv('FRONTEND_ORIGIN')}, allow_credentials=True")
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth")
