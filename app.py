@@ -11,7 +11,7 @@ load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_ORIGIN")],
+    allow_origins=[settings.FRONTEND_ORIGIN],
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allow_headers=['Content-Type', 'Authorization'],
@@ -19,7 +19,7 @@ app.add_middleware(
 
 # Logging
 logging.basicConfig(level=logging.INFO)
-logging.getLogger("uvicorn").info(f"CORS allowed origins: {os.getenv('FRONTEND_ORIGIN')}, allow_credentials=True")
+logging.getLogger("uvicorn").info(f"CORS allowed origins: {settings.FRONTEND_ORIGIN}, allow_credentials=True")
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth")

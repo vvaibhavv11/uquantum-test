@@ -34,7 +34,10 @@ def login(user: LoginPayload, response: Response):
     result = auth_service.login_user(user.username, user.password)
     if not result:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    response.set_cookie(SESSION_COOKIE, result["token"], **_cookie_settings())
+    cookie_info = _cookie_settings()
+    response.set_cookie(SESSION_COOKIE, result["token"], **cookie_info)
+    # Debug header to help verify browser/server behavior during development
+    response.headers["X-Session-Cookie"] = f"set; samesite={cookie_info.get('samesite')}; secure={cookie_info.get('secure')}; httponly={cookie_info.get('httponly')}"
     return {"msg": "Logged in", "user": result["user"]}
 
 
@@ -43,7 +46,10 @@ def login_with_google(google_login: GoogleLoginPayload, response: Response):
     result = auth_service.login_with_google(google_login.credential)
     if not result:
         raise HTTPException(status_code=401, detail="Invalid Google credential")
-    response.set_cookie(SESSION_COOKIE, result["token"], **_cookie_settings())
+    cookie_info = _cookie_settings()
+    response.set_cookie(SESSION_COOKIE, result["token"], **cookie_info)
+    # Debug header to help verify browser/server behavior during development
+    response.headers["X-Session-Cookie"] = f"set; samesite={cookie_info.get('samesite')}; secure={cookie_info.get('secure')}; httponly={cookie_info.get('httponly')}"
     return {"msg": "Logged in with Google", "user": result["user"]}
 
 
