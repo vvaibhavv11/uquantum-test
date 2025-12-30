@@ -43,9 +43,13 @@ def login(user: LoginPayload, response: Response):
 
 @router.post("/google")
 def login_with_google(google_login: GoogleLoginPayload, response: Response):
+    # Log receipt of login attempt (do NOT log full token in production)
+    _logger.info("Google login attempt received; credential length=%d", len(google_login.credential or ""))
     result = auth_service.login_with_google(google_login.credential)
     if not result:
+        _logger.warning("Google login failed for credential (length=%d)", len(google_login.credential or ""))
         raise HTTPException(status_code=401, detail="Invalid Google credential")
+    _logger.info("Google login succeeded for user=%s", result["user"].get("email"))
     cookie_info = _cookie_settings()
     response.set_cookie(SESSION_COOKIE, result["token"], **cookie_info)
     # Debug header to help verify browser/server behavior during development
