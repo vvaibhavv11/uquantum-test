@@ -41,4 +41,4 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 To be added in `tests/`.
 
 ---
-This backend powers the Uniq Quantum Hub MVP – see code for individual service and route details.
+This backend powers the Uniq Quantum Hub MVP – see code for individual service and route details.\n\n## License\n\nThis project is licensed under the GNU General Public License v2.0 (GPL-2.0). See LICENSE-GPL-2.0.txt in the root of the repository for the full license text.\n
