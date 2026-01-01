@@ -1,4 +1,4 @@
-from config import settings
+from settings import settings
 
 class WorkspaceService:
     def __init__(self):

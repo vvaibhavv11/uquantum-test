@@ -1,9 +1,11 @@
 import secrets
 import time
 import requests
+import logging
 from typing import Dict, Optional
-from config import settings
+from settings import settings
 
+_logger = logging.getLogger("auth")
 
 class AuthService:
     """
@@ -16,7 +18,6 @@ class AuthService:
         self.sessions: Dict[str, Dict] = {}
         self.users: Dict[str, Dict] = {}  # keyed by email for quick access
         self.google_client_id = "859859771398-erv8s8o5kdvib9k0n1cu8eau2u9l6u4b.apps.googleusercontent.com"
-
     def _now_iso(self):
         return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
@@ -59,12 +60,14 @@ class AuthService:
             )
             
             if response.status_code != 200:
+                _logger.info("Google tokeninfo returned non-200: %s", response.status_code)
                 return None
             
             token_info = response.json()
             
             # Verify the audience matches our client ID
             if token_info.get("aud") != self.google_client_id:
+                _logger.info("Google token audience mismatch: %s", token_info.get("aud"))
                 return None
             
             # Extract user information
@@ -73,15 +76,17 @@ class AuthService:
             email_verified = token_info.get("email_verified", False)
             
             if not email or not email_verified:
+                _logger.info("Google token missing email/verification: email=%s verified=%s", email, email_verified)
                 return None
             
+            _logger.debug("Google token verified for email=%s", email)
             return {
                 "email": email,
                 "name": name,
                 "picture": token_info.get("picture"),
             }
-        except Exception as e:
-            print(f"Error verifying Google token: {e}")
+        except Exception:
+            _logger.exception("Error verifying Google token")
             return None
 
     def login_with_google(self, credential: str) -> Optional[Dict]:

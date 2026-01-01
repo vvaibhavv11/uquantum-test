@@ -20,12 +20,20 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     
     # Frontend Configuration
-    FRONTEND_ORIGIN: str = "http://localhost:3000,http://localhost:8080"
+    # Default to the production front-end origin. Override via `.env` for local development.
+    FRONTEND_ORIGIN: str = "https://uquantum.vercel.app"
     
     # Transpiler Configuration
     TRANSPILER_BACKEND_QUBITS: int = 27
     TRANSPILER_MODEL_PATH: Optional[str] = None
     TRANSPILER_LOG_DIR: str = "./logs"
+
+    # Cookie settings (session cookie behavior)
+    # PRODUCTION defaults: allow cross-site cookies for production front-ends.
+    # Use COOKIE_SAMESITE='none' and COOKIE_SECURE=True for production (requires HTTPS).
+    # For local development, override these in `.env` (e.g., COOKIE_SAMESITE=lax, COOKIE_SECURE=false).
+    COOKIE_SAMESITE: str = "none"
+    COOKIE_SECURE: bool = True  # Production default: require secure cookies (HTTPS)
     
     class Config:
         env_file = ".env"

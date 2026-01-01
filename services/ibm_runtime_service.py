@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 from fastapi import HTTPException, status
 import logging
-from config import settings
+from settings import settings
 
 
 class IBMRuntimeClient:

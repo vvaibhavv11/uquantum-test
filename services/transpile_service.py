@@ -7,7 +7,7 @@ import numpy as np
 from fastapi import HTTPException, status
 from qiskit import QuantumCircuit, transpile
 from qiskit.providers.fake_provider import GenericBackendV2
-from config import settings
+from settings import settings
 
 try:
     from qiskit.providers.aer import Aer

@@ -9,7 +9,18 @@
    - `IBM_API_KEY`
    - `REDIS_URL`
    - `GROQ_API_KEY`
-   - `FRONTEND_ORIGIN`
+   - `FRONTEND_ORIGIN` (default points to the production front-end `https://uquantum.vercel.app`; override in `.env` for local development with something like `http://localhost:3000`). For credentialed cookies, set an explicit origin (wildcard `*` is not allowed with credentials).
+
+   Production-first defaults:
+   - `FRONTEND_ORIGIN=https://uquantum.vercel.app` (default)
+   - `COOKIE_SAMESITE=none` and `COOKIE_SECURE=true` (cookies are cross-site and require HTTPS in production)
+
+   Local development:
+   - If you're running locally over HTTP, override `.env` with:
+     - `FRONTEND_ORIGIN=http://localhost:3000`
+     - `COOKIE_SAMESITE=lax`
+     - `COOKIE_SECURE=false`
+   - Client must send credentials: `fetch(url, { credentials: 'include' })` or Axios: `{ withCredentials: true }`.
 4. Run backend:
 
 ```bash
@@ -18,7 +29,7 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 
 ## Structure
 - `app.py` – FastAPI main app
-- `config.py` – environment configuration
+- `settings.py` – environment configuration (reads `.env` via pydantic)
 - `services/` – business logic modules
 - `routes/` – API endpoints
 - `transpiler/` – quantum transpilation logic

@@ -1,24 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth_routes, workspace_routes, llm_routes, transpile_routes, execution_routes, hardware_routes
-from config import settings
+from settings import settings
+from dotenv import load_dotenv, dotenv_values
+import os
 import logging
 
 app = FastAPI(title="Uniq Quantum Hub Backend MVP")
-
-# CORS
-origins = [o.strip() for o in settings.FRONTEND_ORIGIN.split(",")]
+load_dotenv() 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,             # Accept both ports for dev
+    allow_origins=[settings.FRONTEND_ORIGIN],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization'],
 )
 
 # Logging
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("uvicorn").info(f"CORS allowed origins: {settings.FRONTEND_ORIGIN}, allow_credentials=True")
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth")
